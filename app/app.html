@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Whiz</title>
+    <script src="app.js"></script>
+    <script>window.Elm = require('./main.js');</script>
+    <script>window.PouchDB = require('pouchdb-browser');</script>
+</head>
+<body>
+</body>
+<script type="text/javascript">
+  if(env.name == 'development'){
+    PouchDB.debug.enable('*')
+  }
+  var db = new PouchDB('playabrava');
+
+  var searchForProduct = function(code, send){
+    db.get(code).then(send).catch(send)
+  }
+
+  var whiz = Elm.Whiz.fullscreen()
+
+  whiz.ports.searchProduct.subscribe(function(productCode) {
+    searchForProduct(productCode, whiz.ports.productSearchResult.send)
+  })
+
+  whiz.ports.confirmOrder.subscribe(function(msg) {
+    whiz.ports.confirmOrderResult.send(confirm(msg))
+  })
+
+  whiz.ports.showErrorAlert.subscribe(function(msg) {
+    alert(msg)
+  })
+
+
+  if( env.name != 'test' ){
+    // Behind the scenes replication
+    db.sync('http://localhost:5984/playabrava', {
+      live: true,
+      retry: true
+      })
+  }
+  else if( env.name == 'test' ){
+    db.destroy().then(function () {
+      db = new PouchDB('playabrava')
+      db.bulkDocs(fixtures.products)
+    }).catch(function (err) {
+    // error occurred
+    })
+  }
+
+</script>
+</html>

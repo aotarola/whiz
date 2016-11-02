@@ -1,0 +1,61 @@
+'use strict';
+
+var gulp = require('gulp');
+var watch = require('gulp-watch');
+var batch = require('gulp-batch');
+var plumber = require('gulp-plumber');
+var jetpack = require('fs-jetpack');
+var bundle = require('./bundle');
+var utils = require('./utils');
+var elm = require('gulp-elm');
+
+var projectDir = jetpack;
+var srcDir = jetpack.cwd('./src');
+var destDir = jetpack.cwd('./app');
+
+gulp.task('bundle', function() {
+  return Promise.all([
+    bundle(srcDir.path('background.js'), destDir.path('background.js')),
+    bundle(srcDir.path('app.js'), destDir.path('app.js')),
+  ]);
+});
+
+gulp.task('elm-init', elm.init);
+
+gulp.task('elm', ['elm-init'], function() {
+  return gulp.src('src/elm/*.elm')
+    .pipe(plumber())
+    .pipe(elm.make({
+      filetype: 'js'
+    }))
+    .pipe(gulp.dest(destDir.path()));
+});
+
+
+gulp.task('environment', function() {
+  var configFile = 'config/env_' + utils.getEnvName() + '.json';
+  projectDir.copy(configFile, destDir.path('env.json'), {
+    overwrite: true
+  });
+});
+
+gulp.task('watch', function() {
+  var beepOnError = function(done) {
+    return function(err) {
+      if (err) {
+        utils.beepSound();
+      }
+      done(err);
+    };
+  };
+
+  watch('src/**/*.js', batch(function(events, done) {
+    gulp.start('bundle', beepOnError(done));
+  }));
+
+  watch('src/**/*.elm', batch(function(events, done) {
+    gulp.start('elm', beepOnError(done));
+  }));
+});
+
+gulp.task('build', ['bundle', 'elm', 'environment']);

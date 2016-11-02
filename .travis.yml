@@ -1,0 +1,27 @@
+os:
+  - osx
+
+cache:
+  directories:
+    - elm-stuff
+
+branches:
+  only:
+    - master
+
+before_install:
+  - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+
+env:
+  - NODE_VERSION="6.3.0" ELM_VERSION="0.17.1"
+
+script: ./scripts/travis-build.sh
+
+cache:
+  directories:
+    - node_modules
+
+notifications:
+  email:
+    on_success: never
+    on_failure: change

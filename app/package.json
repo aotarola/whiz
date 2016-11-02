@@ -1,0 +1,15 @@
+{
+  "name": "whiz",
+  "productName": "Whiz",
+  "description": "Point of sales app",
+  "version": "0.0.0",
+  "author": "Andres Otarola <andres@otarola.me>",
+  "copyright": "© 2016",
+  "homepage": "http://otarola.com",
+  "license": "MIT",
+  "main": "background.js",
+  "dependencies": {
+    "fs-jetpack": "^0.9.0",
+    "pouchdb-browser": "latest"
+  }
+}
