@@ -116,7 +116,7 @@ update msg appState =
                 if keyCode == 27 then
                     case currentProduct of
                         Just p ->
-                            ( resetSearchView appState, Cmd.none )
+                            ( resetSearchView appState, focusInput "search-by-code" )
 
                         Nothing ->
                             ( appState, confirmOrderCancel "Desea cancelar la venta actual?" )
