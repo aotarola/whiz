@@ -1,6 +1,7 @@
 module Messages exposing (..)
 
 import Json.Decode exposing (Value)
+import Keyboard exposing (KeyCode)
 
 
 type Msg
@@ -11,3 +12,4 @@ type Msg
     | UpdatePurchaseQuantity String
     | ProductSearchResult Value
     | ConfirmOrderResult Bool
+    | KeyPressed KeyCode

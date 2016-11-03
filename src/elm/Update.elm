@@ -96,6 +96,21 @@ update msg appState =
             in
                 ( { appState | purchaseQuantity = newQuantity }, Cmd.none )
 
+        KeyPressed keyCode ->
+            let
+                { currentProduct } =
+                    appState
+            in
+                if keyCode == 27 then
+                    case currentProduct of
+                        Just p ->
+                            ( resetSearchView appState, Cmd.none )
+
+                        Nothing ->
+                            ( appState, Cmd.none )
+                else
+                    ( appState, Cmd.none )
+
 
 notEnoughQuantityError : Cmd Msg
 notEnoughQuantityError =
