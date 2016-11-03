@@ -6,7 +6,13 @@ import String
 import Result
 import Models exposing (AppState, Product, LineItem)
 import Messages exposing (Msg(..))
-import Ports exposing (searchProduct, confirmOrder, showErrorAlert)
+import Ports
+    exposing
+        ( searchProduct
+        , confirmOrderPurchase
+        , showErrorAlert
+        , confirmOrderCancel
+        )
 import Decoders exposing (decodeProduct)
 
 
@@ -22,9 +28,15 @@ update msg appState =
                     ( appState, searchProduct code )
 
                 Nothing ->
-                    ( appState, confirmOrder "Desea confirmar la venta?" )
+                    ( appState, confirmOrderPurchase "Desea confirmar la venta?" )
 
-        ConfirmOrderResult ok ->
+        ConfirmOrderPurchase ok ->
+            if ok then
+                ( { appState | lineItems = [] }, Cmd.none )
+            else
+                ( appState, Cmd.none )
+
+        ConfirmOrderCancel ok ->
             if ok then
                 ( { appState | lineItems = [] }, Cmd.none )
             else
@@ -107,7 +119,7 @@ update msg appState =
                             ( resetSearchView appState, Cmd.none )
 
                         Nothing ->
-                            ( appState, Cmd.none )
+                            ( appState, confirmOrderCancel "Desea cancelar la venta actual?" )
                 else
                     ( appState, Cmd.none )
 

@@ -9,7 +9,10 @@ import Json.Decode exposing (Value)
 port searchProduct : String -> Cmd msg
 
 
-port confirmOrder : String -> Cmd msg
+port confirmOrderPurchase : String -> Cmd msg
+
+
+port confirmOrderCancel : String -> Cmd msg
 
 
 port showErrorAlert : String -> Cmd msg
@@ -22,4 +25,7 @@ port showErrorAlert : String -> Cmd msg
 port productSearchResult : (Value -> msg) -> Sub msg
 
 
-port confirmOrderResult : (Bool -> msg) -> Sub msg
+port confirmOrderPurchaseResult : (Bool -> msg) -> Sub msg
+
+
+port confirmOrderCancelResult : (Bool -> msg) -> Sub msg

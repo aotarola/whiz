@@ -25,8 +25,12 @@
     searchForProduct(productCode, whiz.ports.productSearchResult.send)
   })
 
-  whiz.ports.confirmOrder.subscribe(function(msg) {
-    whiz.ports.confirmOrderResult.send(confirm(msg))
+  whiz.ports.confirmOrderPurchase.subscribe(function(msg) {
+    whiz.ports.confirmOrderPurchaseResult.send(confirm(msg))
+  })
+
+  whiz.ports.confirmOrderCancel.subscribe(function(msg) {
+    whiz.ports.confirmOrderCancelResult.send(confirm(msg))
   })
 
   whiz.ports.showErrorAlert.subscribe(function(msg) {

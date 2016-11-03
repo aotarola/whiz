@@ -11,5 +11,6 @@ type Msg
     | UpdateSearchByCode String
     | UpdatePurchaseQuantity String
     | ProductSearchResult Value
-    | ConfirmOrderResult Bool
+    | ConfirmOrderPurchase Bool
+    | ConfirmOrderCancel Bool
     | KeyPressed KeyCode
