@@ -56,8 +56,7 @@ productEntryView appState =
                     , text " | "
                     , input
                         [ id "quantity-entry"
-                        , type' "text"
-                        , value <| displayPurchaseQuantity appState
+                        , type' "number"
                         , onInput UpdatePurchaseQuantity
                         , onEnter <| UpdateLineItems
                         ]
@@ -73,16 +72,6 @@ productEntryView appState =
                     , button [ id "btn-search", onClick SearchProductByCode ] [ text "buscar" ]
                     ]
                 ]
-
-
-displayPurchaseQuantity : AppState -> String
-displayPurchaseQuantity { purchaseQuantity } =
-    case purchaseQuantity of
-        Just v ->
-            toString v
-
-        Nothing ->
-            ""
 
 
 headerView : AppState -> Html Msg

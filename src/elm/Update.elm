@@ -47,7 +47,7 @@ update msg appState =
                 Ok product ->
                     if isPurchasable 1 product then
                         ( { appState
-                            | currentProduct = Just product
+                            | currentProduct = Just <| Debug.log "ProductSearchResult" product
                           }
                         , focusInput "quantity-entry"
                         )
@@ -62,10 +62,7 @@ update msg appState =
                 { purchaseQuantity, currentProduct, lineItems } =
                     appState
 
-                qty_ =
-                    Maybe.withDefault 1 purchaseQuantity
-
-                searchForItem list x =
+                searchForItemRec list x =
                     case list of
                         [] ->
                             Nothing
@@ -75,38 +72,43 @@ update msg appState =
                                 ( qty, item ) =
                                     first
                             in
-                                Just item
+                                if item.code == x.code then
+                                    Just item
+                                else
+                                    searchForItemRec rest x
 
-                checkPurchasability =
-                    case (searchForItem lineItems) currentProduct of
+                checkPurchasability product =
+                    case searchForItemRec lineItems product of
                         Just item ->
-                            isPurchasable qty_ item
+                            isPurchasable purchaseQuantity item
 
                         Nothing ->
                             True
             in
-                if checkPurchasability then
-                    let
-                        newAppState =
-                            { appState | purchaseQuantity = Just qty_ }
-                    in
-                        ( newAppState
-                            |> addToLineItems
-                            |> resetSearchView
-                        , focusInput "search-by-code"
-                        )
-                else
-                    ( appState, notEnoughQuantityError )
+                case currentProduct of
+                    Just product ->
+                        if checkPurchasability product then
+                            ( appState
+                                |> addToLineItems
+                                |> resetSearchView
+                            , focusInput "search-by-code"
+                            )
+                        else
+                            ( appState, notEnoughQuantityError )
+
+                    Nothing ->
+                        ( appState, Cmd.none )
 
         UpdateSearchByCode code ->
             ( { appState | codeSearchInput = Just code }, Cmd.none )
 
         UpdatePurchaseQuantity quantity ->
-            let
-                newQuantity =
-                    Result.toMaybe <| String.toInt quantity
-            in
-                ( { appState | purchaseQuantity = newQuantity }, Cmd.none )
+            case String.toInt quantity of
+                Ok result ->
+                    ( { appState | purchaseQuantity = max 1 result }, Cmd.none )
+
+                Err _ ->
+                    appState ! []
 
         KeyPressed keyCode ->
             let
@@ -158,10 +160,10 @@ addToLineItems appState =
         { lineItems, purchaseQuantity, currentProduct } =
             appState
 
-        updateLineItemsRec qty_ product list =
+        updateLineItemsRec product list =
             case list of
                 [] ->
-                    [ ( qty_, decreaseProductStock qty_ product ) ]
+                    [ ( purchaseQuantity, decreaseProductStock purchaseQuantity product ) ]
 
                 first :: rest ->
                     let
@@ -169,24 +171,19 @@ addToLineItems appState =
                             first
                     in
                         if item.code == product.code then
-                            ( qty + qty_, decreaseProductStock qty_ item ) :: rest
+                            ( qty + purchaseQuantity, decreaseProductStock purchaseQuantity item ) :: rest
                         else
-                            first :: updateLineItemsRec qty_ product rest
+                            first :: updateLineItemsRec product rest
 
-        updateLineItems qty_ currentProduct =
+        updateLineItems currentProduct =
             case currentProduct of
                 Just product ->
-                    updateLineItemsRec qty_ product lineItems
+                    updateLineItemsRec product lineItems
 
                 Nothing ->
                     lineItems
     in
-        case purchaseQuantity of
-            Just qty_ ->
-                { appState
-                    | lineItems = updateLineItems qty_ currentProduct
-                    , purchaseQuantity = Nothing
-                }
-
-            Nothing ->
-                appState
+        { appState
+            | lineItems = updateLineItems currentProduct
+            , purchaseQuantity = 1
+        }
