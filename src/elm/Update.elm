@@ -47,7 +47,7 @@ update msg appState =
                 Ok product ->
                     if isPurchasable 1 product then
                         ( { appState
-                            | currentProduct = Just <| Debug.log "ProductSearchResult" product
+                            | currentProduct = Just product
                           }
                         , focusInput "quantity-entry"
                         )
