@@ -39,7 +39,7 @@ productSearchView appState =
 productEntryView : AppState -> List (Html Msg)
 productEntryView appState =
     let
-        { codeSearchInput, purchaseQuantity, currentProduct } =
+        { codeSearchInput, currentProduct } =
             appState
 
         code =
@@ -56,8 +56,8 @@ productEntryView appState =
                     , text " | "
                     , input
                         [ id "quantity-entry"
-                        , type' "number"
-                        , value <| toString purchaseQuantity
+                        , type' "text"
+                        , value <| displayPurchaseQuantity appState
                         , onInput UpdatePurchaseQuantity
                         , onEnter <| UpdateLineItems
                         ]
@@ -73,6 +73,16 @@ productEntryView appState =
                     , button [ id "btn-search", onClick SearchProductByCode ] [ text "buscar" ]
                     ]
                 ]
+
+
+displayPurchaseQuantity : AppState -> String
+displayPurchaseQuantity { purchaseQuantity } =
+    case purchaseQuantity of
+        Just v ->
+            toString v
+
+        Nothing ->
+            ""
 
 
 headerView : AppState -> Html Msg
