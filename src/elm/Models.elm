@@ -32,10 +32,10 @@ type alias LineItem =
 
 
 type alias AppState =
-    { lineItems : List LineItem
-    , userId : String
+    { userId : String
     , purchaseQuantity : Int
-    , codeSearchInput : Maybe String
+    , codeSearchInput : String
+    , lineItems : List LineItem
     , currentProduct : Maybe Product
     }
 
@@ -47,4 +47,4 @@ unknownUser =
 
 initAppState : AppState
 initAppState =
-    AppState [] "160568070" 1 Nothing Nothing
+    AppState "160568070" 1 "" [] Nothing

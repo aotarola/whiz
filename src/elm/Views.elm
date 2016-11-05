@@ -41,9 +41,6 @@ productEntryView appState =
     let
         { codeSearchInput, currentProduct } =
             appState
-
-        code =
-            Maybe.withDefault "" codeSearchInput
     in
         case currentProduct of
             Just product ->
@@ -73,7 +70,7 @@ productEntryView appState =
                         , type' "text"
                         , autofocus True
                         , onInput UpdateSearchByCode
-                        , value code
+                        , value codeSearchInput
                         , onEnter SearchProductByCode
                         ]
                         []

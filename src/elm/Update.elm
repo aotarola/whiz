@@ -23,19 +23,23 @@ update msg appState =
             ( appState, Cmd.none )
 
         SearchProductByCode ->
-            case appState.codeSearchInput of
-                Just code ->
-                    ( appState, searchProduct code )
+            let
+                { codeSearchInput } =
+                    appState
+            in
+                case codeSearchInput of
+                    "" ->
+                        let
+                            command =
+                                if hasPendingPurchase appState then
+                                    confirmOrderPurchase "Desea confirmar la venta?"
+                                else
+                                    Cmd.none
+                        in
+                            ( appState, command )
 
-                Nothing ->
-                    let
-                        command =
-                            if hasPendingPurchase appState then
-                                confirmOrderPurchase "Desea confirmar la venta?"
-                            else
-                                Cmd.none
-                    in
-                        ( appState, command )
+                    _ ->
+                        ( appState, searchProduct codeSearchInput )
 
         ConfirmOrderPurchase ok ->
             if ok then
@@ -62,7 +66,7 @@ update msg appState =
                         ( appState, notEnoughQuantityError )
 
                 Err _ ->
-                    ( { appState | codeSearchInput = Nothing }, Cmd.none )
+                    ( { appState | codeSearchInput = "" }, Cmd.none )
 
         UpdateLineItems ->
             let
@@ -107,7 +111,7 @@ update msg appState =
                         ( appState, Cmd.none )
 
         UpdateSearchByCode code ->
-            ( { appState | codeSearchInput = Just code }, Cmd.none )
+            ( { appState | codeSearchInput = code }, Cmd.none )
 
         UpdatePurchaseQuantity quantity ->
             case String.toInt quantity of
@@ -161,7 +165,7 @@ focusInput id =
 resetSearchView : AppState -> AppState
 resetSearchView appState =
     { appState
-        | codeSearchInput = Nothing
+        | codeSearchInput = ""
         , currentProduct = Nothing
     }
 
