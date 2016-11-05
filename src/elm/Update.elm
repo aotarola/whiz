@@ -62,7 +62,7 @@ update msg appState =
                         ( appState, notEnoughQuantityError )
 
                 Err _ ->
-                    ( appState, Cmd.none )
+                    ( { appState | codeSearchInput = Nothing }, Cmd.none )
 
         UpdateLineItems ->
             let
