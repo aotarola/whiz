@@ -68,8 +68,21 @@ productEntryView appState =
                 [ div []
                     [ strong [] [ text "codigo barra" ] ]
                 , div []
-                    [ input [ id "search-by-code", type' "text", autofocus True, onInput UpdateSearchByCode, value code, onEnter SearchProductByCode ] []
-                    , button [ id "btn-search", onClick SearchProductByCode ] [ text "buscar" ]
+                    [ input
+                        [ id "search-by-code"
+                        , type' "text"
+                        , autofocus True
+                        , onInput UpdateSearchByCode
+                        , value code
+                        , onEnter SearchProductByCode
+                        ]
+                        []
+                    , button
+                        [ id
+                            "btn-search"
+                        , onClick SearchProductByCode
+                        ]
+                        [ text "buscar" ]
                     ]
                 ]
 
