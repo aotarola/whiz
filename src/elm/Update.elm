@@ -28,7 +28,14 @@ update msg appState =
                     ( appState, searchProduct code )
 
                 Nothing ->
-                    ( appState, confirmOrderPurchase "Desea confirmar la venta?" )
+                    let
+                        command =
+                            if hasPendingPurchase appState then
+                                confirmOrderPurchase "Desea confirmar la venta?"
+                            else
+                                Cmd.none
+                    in
+                        ( appState, command )
 
         ConfirmOrderPurchase ok ->
             if ok then
@@ -124,6 +131,11 @@ update msg appState =
                             ( appState, confirmOrderCancel "Desea cancelar la venta actual?" )
                 else
                     ( appState, Cmd.none )
+
+
+hasPendingPurchase : AppState -> Bool
+hasPendingPurchase { lineItems } =
+    not <| List.isEmpty lineItems
 
 
 notEnoughQuantityError : Cmd Msg
