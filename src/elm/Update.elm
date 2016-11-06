@@ -66,7 +66,7 @@ update msg appState =
                         ( appState, notEnoughQuantityError )
 
                 Err _ ->
-                    ( { appState | codeSearchInput = "" }, Cmd.none )
+                    ( { appState | codeSearchInput = "" }, showErrorAlert "Producto no encontrado" )
 
         UpdateLineItems ->
             let
