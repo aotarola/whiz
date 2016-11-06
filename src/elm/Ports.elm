@@ -25,6 +25,9 @@ port showErrorAlert : String -> Cmd msg
 port productSearchResult : (Value -> msg) -> Sub msg
 
 
+port syncProductUpdates : (Value -> msg) -> Sub msg
+
+
 port confirmOrderPurchaseResult : (Bool -> msg) -> Sub msg
 
 

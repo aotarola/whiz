@@ -7,6 +7,7 @@ import Ports
         ( productSearchResult
         , confirmOrderPurchaseResult
         , confirmOrderCancelResult
+        , syncProductUpdates
         )
 import Keyboard
 
@@ -17,5 +18,6 @@ subscriptions model =
         [ productSearchResult ProductSearchResult
         , confirmOrderPurchaseResult ConfirmOrderPurchase
         , confirmOrderCancelResult ConfirmOrderCancel
+        , syncProductUpdates SyncProductUpdates
         , Keyboard.downs KeyPressed
         ]

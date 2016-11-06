@@ -6,6 +6,7 @@ import String
 import Result
 import Models exposing (AppState, Product, LineItem)
 import Messages exposing (Msg(..))
+import Decoders exposing (decodeProduct, decodeProductList)
 import Ports
     exposing
         ( searchProduct
@@ -13,7 +14,6 @@ import Ports
         , showErrorAlert
         , confirmOrderCancel
         )
-import Decoders exposing (decodeProduct)
 
 
 update : Msg -> AppState -> ( AppState, Cmd Msg )
@@ -119,7 +119,15 @@ update msg appState =
                     ( { appState | purchaseQuantity = max 1 result }, Cmd.none )
 
                 Err _ ->
-                    appState ! []
+                    ( appState, Cmd.none )
+
+        SyncProductUpdates value ->
+            case decodeProductList value of
+                Ok productList ->
+                    ( updateCurrentPurchaseItems appState productList, Cmd.none )
+
+                Err _ ->
+                    ( appState, Cmd.none )
 
         KeyPressed keyCode ->
             let
@@ -135,6 +143,34 @@ update msg appState =
                             ( appState, confirmOrderCancel "Desea cancelar la venta actual?" )
                 else
                     ( appState, Cmd.none )
+
+
+updateCurrentPurchaseItems : AppState -> List Product -> AppState
+updateCurrentPurchaseItems appState updatedProducts =
+    let
+        { lineItems } =
+            appState
+
+        getUpdatedProuctRec item list =
+            case list of
+                [] ->
+                    Nothing
+
+                first :: rest ->
+                    if first.code == item.code then
+                        Just first
+                    else
+                        getUpdatedProuctRec item rest
+
+        updateLineItemsCurrentStock ( qty, item ) =
+            case getUpdatedProuctRec item updatedProducts of
+                Just updatedProduct ->
+                    ( qty, { item | currentStock = updatedProduct.currentStock } )
+
+                Nothing ->
+                    ( qty, item )
+    in
+        { appState | lineItems = List.map updateLineItemsCurrentStock lineItems }
 
 
 hasPendingPurchase : AppState -> Bool

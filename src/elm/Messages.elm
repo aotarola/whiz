@@ -14,3 +14,4 @@ type Msg
     | ConfirmOrderPurchase Bool
     | ConfirmOrderCancel Bool
     | KeyPressed KeyCode
+    | SyncProductUpdates Value

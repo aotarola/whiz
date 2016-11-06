@@ -18,6 +18,16 @@ productDecoder =
         |> Pipeline.required "isTaxable" Decode.bool
 
 
+productListDecoder : Decode.Decoder (List Product)
+productListDecoder =
+    Decode.list productDecoder
+
+
 decodeProduct : Value -> Result String Product
 decodeProduct =
     Decode.decodeValue productDecoder
+
+
+decodeProductList : Value -> Result String (List Product)
+decodeProductList =
+    Decode.decodeValue productListDecoder

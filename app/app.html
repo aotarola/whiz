@@ -43,7 +43,16 @@
     db.sync('http://localhost:5984/playabrava', {
       live: true,
       retry: true
-      })
+    }).on( 'change', function(change) {
+      if(change.direction == 'pull'){
+        products = change.change.docs.filter(function(obj){
+          return obj.type == 'product'
+        })
+        if(products.length > 0){
+          whiz.ports.syncProductUpdates.send(products)
+        }
+      }
+    })
   }
   else if( env.name == 'test' ){
     db.destroy().then(function () {
