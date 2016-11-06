@@ -165,7 +165,7 @@ updateCurrentPurchaseItems appState updatedProducts =
         updateLineItemsCurrentStock ( qty, item ) =
             case getUpdatedProuctRec item updatedProducts of
                 Just updatedProduct ->
-                    ( qty, { item | currentStock = updatedProduct.currentStock } )
+                    ( qty, { item | currentStock = updatedProduct.currentStock - qty } )
 
                 Nothing ->
                     ( qty, item )
